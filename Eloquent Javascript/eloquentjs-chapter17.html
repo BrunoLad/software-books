@@ -1,0 +1,711 @@
+<p>Normal HTML here.</p>
+<svg xmlns="http://www.w3.org/2000/svg">
+    <circle r="50" cx="50" cy="50" fill="red" />
+    <rect x="120" y="5" width="90" height="90" stroke="blue" fill="none" />
+</svg>
+
+<script>
+    let circle = document.querySelector("circle");
+    circle.setAttribute("fill", "cyan");
+</script>
+
+<p>Before canvas.</p>
+<canvas width="120" height="60"></canvas>
+<p>After canvas.</p>
+<script>
+    let canvas = document.querySelector("canvas");
+    let context = canvas.getContext("2d");
+    context.fillStyle = "red";
+    context.fillRect(10, 10, 100, 50);
+</script>
+
+<canvas></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    cx.strokeStyle = "blue";
+    cx.strokeRect(5, 5, 50, 50);
+    cx.lineWidth = 5;
+    cx.strokeRect(135, 5, 50, 50);
+</script>
+
+<canvas></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    cx.beginPath();
+    for (let y = 10; y < 100; y += 10) {
+        cx.moveTo(10, y);
+        cx.lineTo(90, y);
+    }
+    cx.stroke();
+</script>
+
+<canvas></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    cx.beginPath();
+    cx.moveTo(50, 10);
+    cx.lineTo(10, 70);
+    cx.lineTo(90, 70);
+    cx.fill();
+</script>
+
+<canvas></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    cx.beginPath();
+    cx.moveTo(10, 90);
+    // control=(60,10) goal=(90,90)
+    cx.quadraticCurveTo(60, 10, 90, 90);
+    cx.lineTo(60, 10);
+    cx.closePath();
+    cx.stroke();
+</script>
+
+<canvas></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    cx.beginPath();
+    cx.moveTo(10, 90);
+    // control1=(10,10) control2=(90,10) goal=(50,90)
+    cx.bezierCurveTo(10, 10, 90, 10, 50, 90);
+    cx.lineTo(90, 10);
+    cx.lineTo(10, 10);
+    cx.closePath();
+    cx.stroke();
+</script>
+
+<canvas></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    cx.beginPath();
+    // center=(50,50) radius=40 angle=0 to 7
+    cx.arc(50, 50, 40, 0, 7);
+    // center=(150,50) radius=40 angle=0 to ½π
+    cx.arc(150, 50, 40, 0, 0.5 * Math.PI);
+    cx.stroke();
+</script>
+
+<script>
+    const results = [
+        { name: "Satisfied", count: 1043, color: "lightblue" },
+        { name: "Neutral", count: 563, color: "lightgreen" },
+        { name: "Unsatisfied", count: 510, color: "pink" },
+        { name: "No comment", count: 175, color: "silver" }
+    ];
+</script>
+
+<canvas width="200" height="200"></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    let total = results
+        .reduce((sum, { count }) => sum + count, 0);
+    // Start at the top
+    let currentAngle = -0.5 * Math.PI;
+    for (let result of results) {
+        let sliceAngle = (result.count / total) * 2 * Math.PI;
+        cx.beginPath();
+        // center=100,100, radius=100
+        // from current angle, clockwise by slice's angle
+        cx.arc(100, 100, 100,
+            currentAngle, currentAngle + sliceAngle);
+        currentAngle += sliceAngle;
+        cx.lineTo(100, 100);
+        cx.fillStyle = result.color;
+        cx.fill();
+    }
+</script>
+
+<canvas></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    cx.font = "28px Georgia";
+    cx.fillStyle = "fuchsia";
+    cx.fillText("I can draw text, too!", 10, 50);
+</script>
+
+<canvas></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    let img = document.createElement("img");
+    img.src = "img/hat.png";
+    img.addEventListener("load", () => {
+        for (let x = 10; x < 200; x += 30) {
+            cx.drawImage(img, x, 10);
+        }
+    });
+</script>
+
+<canvas></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    let img = document.createElement("img");
+    img.src = "img/player.png";
+    let spriteW = 24, spriteH = 30;
+    img.addEventListener("load", () => {
+        let cycle = 0;
+        setInterval(() => {
+            cx.clearRect(0, 0, spriteW, spriteH);
+            cx.drawImage(img,
+                // source rectangle
+                cycle * spriteW, 0, spriteW, spriteH,
+                // destination rectangle
+                0, 0, spriteW, spriteH);
+            cycle = (cycle + 1) % 8;
+        }, 120);
+    });
+</script>
+
+<canvas></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    cx.scale(3, .5);
+    cx.beginPath();
+    cx.arc(50, 50, 40, 0, 7);
+    cx.lineWidth = 3;
+    cx.stroke();
+</script>
+
+<script>
+    function flipHorizontally(context, around) {
+        context.translate(around, 0);
+        context.scale(-1, 1);
+        context.translate(-around, 0);
+    }
+</script>
+
+<canvas></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    let img = document.createElement("img");
+    img.src = "img/player.png";
+    spriteW = 24, spriteH = 30;
+    img.addEventListener("load", () => {
+        flipHorizontally(cx, 100 + spriteW / 2);
+        cx.drawImage(img, 0, 0, spriteW, spriteH,
+            100, 0, spriteW, spriteH);
+    });
+</script>
+
+<canvas width="600" height="300"></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    function branch(length, angle, scale) {
+        cx.fillRect(0, 0, 1, length);
+        if (length < 8) return;
+        cx.save();
+        cx.translate(0, length);
+        cx.rotate(-angle);
+        branch(length * scale, angle, scale);
+        cx.rotate(2 * angle);
+        branch(length * scale, angle, scale);
+        cx.restore();
+    }
+    cx.translate(300, 0);
+    branch(60, 0.5, 0.8);
+</script>
+
+<script>
+    class CanvasDisplay {
+        constructor(parent, level) {
+            this.canvas = document.createElement("canvas");
+            this.canvas.width = Math.min(600, level.width * scale);
+            this.canvas.height = Math.min(450, level.height * scale);
+            parent.appendChild(this.canvas);
+            this.cx = this.canvas.getContext("2d");
+
+            this.flipPlayer = false;
+
+            this.viewport = {
+                left: 0,
+                top: 0,
+                width: this.canvas.width / scale,
+                height: this.canvas.height / scale
+            };
+        }
+
+        clear() {
+            this.canvas.remove();
+        }
+    }
+
+    CanvasDisplay.prototype.syncState = function (state) {
+        this.updateViewport(state);
+        this.clearDisplay(state.status);
+        this.drawBackground(state.level);
+        this.drawActors(state.actors);
+    };
+
+    CanvasDisplay.prototype.updateViewport = function (state) {
+        let view = this.viewport, margin = view.width / 3;
+        let player = state.player;
+        let center = player.pos.plus(player.size.times(0.5));
+
+        if (center.x < view.left + margin) {
+            view.left = Math.max(center.x - margin, 0);
+        } else if (center.x > view.left + view.width - margin) {
+            view.left = Math.min(center.x + margin - view.width,
+                state.level.width - view.width);
+        }
+        if (center.y < view.top + margin) {
+            view.top = Math.max(center.y - margin, 0);
+        } else if (center.y > view.top + view.height - margin) {
+            view.top = Math.min(center.y + margin - view.height,
+                state.level.height - view.height);
+        }
+    };
+
+    CanvasDisplay.prototype.clearDisplay = function (status) {
+        if (status == "won") {
+            this.cx.fillStyle = "rgb(68, 191, 255)";
+        } else if (status == "lost") {
+            this.cx.fillStyle = "rgb(44, 136, 214)";
+        } else {
+            this.cx.fillStyle = "rgb(52, 166, 251)";
+        }
+        this.cx.fillRect(0, 0,
+            this.canvas.width, this.canvas.height);
+    };
+
+    let otherSprites = document.createElement("img");
+    otherSprites.src = "img/sprites.png";
+
+    CanvasDisplay.prototype.drawBackground = function (level) {
+        let { left, top, width, height } = this.viewport;
+        let xStart = Math.floor(left);
+        let xEnd = Math.ceil(left + width);
+        let yStart = Math.floor(top);
+        let yEnd = Math.ceil(top + height);
+
+        for (let y = yStart; y < yEnd; y++) {
+            for (let x = xStart; x < xEnd; x++) {
+                let tile = level.rows[y][x];
+                if (tile == "empty") continue;
+                let screenX = (x - left) * scale;
+                let screenY = (y - top) * scale;
+                let tileX = tile == "lava" ? scale : 0;
+                this.cx.drawImage(otherSprites,
+                    tileX, 0, scale, scale,
+                    screenX, screenY, scale, scale);
+            }
+        }
+    };
+
+    let playerSprites = document.createElement("img");
+    playerSprites.src = "img/player.png";
+    const playerXOverlap = 4;
+
+    CanvasDisplay.prototype.drawPlayer = function (player, x, y,
+        width, height) {
+        width += playerXOverlap * 2;
+        x -= playerXOverlap;
+        if (player.speed.x != 0) {
+            this.flipPlayer = player.speed.x < 0;
+        }
+
+        let tile = 8;
+        if (player.speed.y != 0) {
+            tile = 9;
+        } else if (player.speed.x != 0) {
+            tile = Math.floor(Date.now() / 60) % 8;
+        }
+
+        this.cx.save();
+        if (this.flipPlayer) {
+            flipHorizontally(this.cx, x + width / 2);
+        }
+        let tileX = tile * width;
+        this.cx.drawImage(playerSprites, tileX, 0, width, height,
+            x, y, width, height);
+        this.cx.restore();
+    };
+
+    CanvasDisplay.prototype.drawActors = function (actors) {
+        for (let actor of actors) {
+            let width = actor.size.x * scale;
+            let height = actor.size.y * scale;
+            let x = (actor.pos.x - this.viewport.left) * scale;
+            let y = (actor.pos.y - this.viewport.top) * scale;
+            if (actor.type == "player") {
+                this.drawPlayer(actor, x, y, width, height);
+            } else {
+                let tileX = (actor.type == "coin" ? 2 : 1) * scale;
+                this.cx.drawImage(otherSprites,
+                    tileX, 0, width, height,
+                    x, y, width, height);
+            }
+        }
+    };
+</script>
+
+<!-- SHAPES -->
+<canvas width="600" height="200"></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+
+    // Your code here.
+    /*cx.beginPath();
+    cx.moveTo(0, 40);
+    cx.lineTo(80, 40);
+    cx.lineTo(60, 0);
+    cx.lineTo(20, 0);
+    cx.closePath();
+    cx.stroke();*/
+
+    drawTrapezoid(cx, 0, 60, 80, 40, 20);
+
+    function drawTrapezoid(context, posX, posY, lSide, sSide, sSideHeight) {
+        const sSideOrigin = lSide - ((lSide - sSide) / 2);
+
+        context.beginPath();
+        context.moveTo(posX, posY);
+        context.lineTo(lSide, posY);
+        context.lineTo(sSideOrigin, sSideHeight);
+        context.lineTo(sSideOrigin - sSide, sSideHeight);
+        context.closePath();
+        context.stroke();
+    }
+
+    function drawSquare(context, posX, posY, len, func, color) {
+        context[`${func}Style`] = color;
+        context[`${func}Rect`](posX, posY, len, len);
+    }
+
+    function rotate(context, degree) {
+        context.rotate(degree);
+    }
+
+    function drawDiamond(context, posX, posY, len, func, color) {
+        context.save();
+        rotate(context, Math.PI / 4);
+        drawSquare(
+            context,
+            (posX * Math.cos(Math.PI / 4)) + (posY * Math.sin(Math.PI / 4)),
+            -(posX * Math.sin(Math.PI / 4)) + (posY * Math.cos(Math.PI / 4)),
+            len,
+            func,
+            color);
+
+        // could've also used resetTransform
+        context.restore();
+    }
+
+    drawDiamond(cx, 120, 10, 40, 'fill', 'red');
+
+    /*let step = 10;
+    cx.beginPath();
+    cx.moveTo(120, 10);
+    for (let y = 10; y < 80; y += step) {
+      cx.lineTo(120, y);
+      cx.lineTo(200, y + 5);
+    }
+    cx.stroke();*/
+
+    drawZigZag(cx, 165, 0, 80, 80, 10, 5);
+
+    function drawZigZag(context, posX, posY, width, total, step, slant) {
+        context.beginPath();
+        cx.moveTo(posX, posY);
+        for (let y = posY; y < total; y += step) {
+            cx.lineTo(posX, y);
+            cx.lineTo(posX + width, y + slant);
+        }
+        cx.stroke();
+    }
+
+    drawSpiral(cx, 300, 50, 100);
+
+    // Don't think this is what the exercise was asking, but worked
+    function drawSpiral(context, posX, posY, lines) {
+        context.beginPath();
+        let angle = 0;
+
+        for (let i = 0; i < lines; i++) {
+            // center(x,y), radius, start and end angle
+            context.arc(
+                posX,
+                posY,
+                0.1 + (i / 2),
+                angle,
+                angle + Math.PI / 5);
+            angle += Math.PI / 5;
+        }
+        cx.stroke();
+    }
+
+    drawStar(cx, 430, 45, 40, 8, 'yellow');
+
+    function drawStar(context, posX, posY, radius, sides, color) {
+        context.beginPath();
+        const angle = (2 * Math.PI) / sides;
+        let startAngle = 0;
+        let startX = posX;
+        let startY = posY;
+        context.fillStyle = color;
+        for (let i = 0; i < sides; i++) {
+            context.bezierCurveTo(
+                posX + (radius * Math.cos(startAngle)),
+                posY + (radius * Math.sin(startAngle)),
+                posX + ((radius / 7) * Math.cos((startAngle + (angle / 2)))),
+                posY + ((radius / 7) * Math.sin((startAngle + (angle / 2)))),
+                posX + (radius * Math.cos(startAngle + angle)),
+                posY + (radius * Math.sin(startAngle + angle)));
+            startAngle += angle;
+            startX += radius * Math.cos(startAngle);
+            startY += radius * Math.sin(startAngle);
+        }
+        context.fill();
+    }
+</script>
+
+<!-- BOOK SOLUTION -->
+<script src="code/chapter/16_game.js"></script>
+<script src="code/levels.js"></script>
+<script src="code/chapter/17_canvas.js"></script>
+
+<canvas width="600" height="200"></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+
+    function trapezoid(x, y) {
+        cx.beginPath();
+        cx.moveTo(x, y);
+        cx.lineTo(x + 50, y);
+        cx.lineTo(x + 70, y + 50);
+        cx.lineTo(x - 20, y + 50);
+        cx.closePath();
+        cx.stroke();
+    }
+    trapezoid(30, 30);
+
+    function diamond(x, y) {
+        cx.translate(x + 30, y + 30);
+        cx.rotate(Math.PI / 4);
+        cx.fillStyle = "red";
+        cx.fillRect(-30, -30, 60, 60);
+        cx.resetTransform();
+    }
+    diamond(140, 30);
+
+    function zigzag(x, y) {
+        cx.beginPath();
+        cx.moveTo(x, y);
+        for (let i = 0; i < 8; i++) {
+            cx.lineTo(x + 80, y + i * 8 + 4);
+            cx.lineTo(x, y + i * 8 + 8);
+        }
+        cx.stroke();
+    }
+    zigzag(240, 20);
+
+    function spiral(x, y) {
+        let radius = 50, xCenter = x + radius, yCenter = y + radius;
+        cx.beginPath();
+        cx.moveTo(xCenter, yCenter);
+        for (let i = 0; i < 300; i++) {
+            let angle = i * Math.PI / 30;
+            let dist = radius * i / 300;
+            cx.lineTo(xCenter + Math.cos(angle) * dist,
+                yCenter + Math.sin(angle) * dist);
+        }
+        cx.stroke();
+    }
+    spiral(340, 20);
+
+    function star(x, y) {
+        let radius = 50, xCenter = x + radius, yCenter = y + radius;
+        cx.beginPath();
+        cx.moveTo(xCenter + radius, yCenter);
+        for (let i = 1; i <= 8; i++) {
+            let angle = i * Math.PI / 4;
+            cx.quadraticCurveTo(xCenter, yCenter,
+                xCenter + Math.cos(angle) * radius,
+                yCenter + Math.sin(angle) * radius);
+        }
+        cx.fillStyle = "gold";
+        cx.fill();
+    }
+    star(440, 20);
+</script>
+
+
+<!-- THE PIE CHART -->
+<canvas width="600" height="300"></canvas>
+<script>
+    function flipVertically(context, around) {
+        context.translate(0, around);
+        context.scale(1, -1);
+        context.translate(0, -around);
+    }
+
+    function flipHorizontally(context, around) {
+        context.translate(around, 0);
+        context.scale(-1, 1);
+        context.translate(-around, 0);
+    }
+
+    let cx = document.querySelector("canvas").getContext("2d");
+    let pieChartTotal = results
+        .reduce((sum, { count }) => sum + count, 0);
+    let chartCurrentAngle = -0.5 * Math.PI;
+    let centerX = 300, centerY = 150;
+
+    // Add code to draw the slice labels in this loop.
+    for (let result of results) {
+        const radius = 100;
+        let sliceAngle = (result.count / pieChartTotal) * 2 * Math.PI;
+        cx.beginPath();
+        cx.arc(centerX, centerY, radius,
+            chartCurrentAngle, chartCurrentAngle + sliceAngle);
+        cx.font = "18px Georgia";
+        cx.fillStyle = "black";
+        cx.save();
+        cx.rotate(chartCurrentAngle + (sliceAngle / 2));
+        const newCenterX = centerX + (radius * Math.cos(chartCurrentAngle + (sliceAngle / 2)));
+        const newCenterY = centerY + (radius * Math.sin(chartCurrentAngle + (sliceAngle / 2)));
+        const calculatedX = (newCenterX * Math.cos(chartCurrentAngle + (sliceAngle / 2))) + (newCenterY * Math.sin(chartCurrentAngle + (sliceAngle / 2)));
+        const calculatedY = -(newCenterX * Math.sin(chartCurrentAngle + (sliceAngle / 2))) + (newCenterY * Math.cos(chartCurrentAngle + (sliceAngle / 2)));
+        if (calculatedY < 0) {
+            flipVertically(cx, calculatedY);
+            // ratio is dependent on letter width, which varies from font to font
+            flipHorizontally(cx, calculatedX + (result.name.length * 4));
+        }
+        cx.fillText(
+            result.name,
+            calculatedX,
+            calculatedY
+        );
+        chartCurrentAngle += sliceAngle;
+        cx.restore();
+        cx.lineTo(centerX, centerY);
+        cx.fillStyle = result.color;
+        cx.fill();
+    }
+</script>
+
+<!-- BOOK SOLUTION -->
+<script src="code/chapter/16_game.js"></script>
+<script src="code/levels.js"></script>
+<script src="code/chapter/17_canvas.js"></script>
+
+<canvas width="600" height="300"></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+    let total2 = results.reduce(function (sum, choice) {
+        return sum + choice.count;
+    }, 0);
+
+    let currentAngle2 = -0.5 * Math.PI;
+    let centerX2 = 300, centerY2 = 150;
+
+    results.forEach(function (result) {
+        let sliceAngle = (result.count / total2) * 2 * Math.PI;
+        cx.beginPath();
+        cx.arc(centerX2, centerY2, 100,
+            currentAngle2, currentAngle2 + sliceAngle);
+
+        let middleAngle = currentAngle2 + 0.5 * sliceAngle;
+        let textX = Math.cos(middleAngle) * 120 + centerX2;
+        let textY = Math.sin(middleAngle) * 120 + centerY2;
+        cx.textBaseLine = "middle";
+        if (Math.cos(middleAngle) > 0) {
+            cx.textAlign = "left";
+        } else {
+            cx.textAlign = "right";
+        }
+        cx.font = "15px sans-serif";
+        cx.fillStyle = "black";
+        cx.fillText(result.name, textX, textY);
+
+        currentAngle2 += sliceAngle;
+        cx.lineTo(centerX2, centerY2);
+        cx.fillStyle = result.color;
+        cx.fill();
+    });
+</script>
+
+<!-- A bouncing ball -->
+<canvas width="400" height="400"></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+
+    let lastTime = null;
+    function frame(time) {
+        if (lastTime != null) {
+            updateAnimation(Math.min(100, time - lastTime) / 1000);
+        }
+        lastTime = time;
+        requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    let ballSpeed = 10;
+    function updateAnimation(step) {
+        // Your code here.
+        cx.clearRect(300, 50, 100, 100);
+        cx.strokeRect(300, 50, 100, 100);
+        cx.beginPath();
+        cx.fillStyle = "red";
+        const x = 300 + ((step * ballSpeed) % 100);
+        const y = 50 + ((step * ballSpeed) % 100);
+        ballSpeed += 100;
+        cx.arc(x, y, 4, 0, 7);
+        cx.fill();
+    }
+</script>
+
+<!-- BOOK SOLUTION -->
+<script src="code/chapter/16_game.js"></script>
+<script src="code/levels.js"></script>
+<script src="code/chapter/17_canvas.js"></script>
+
+<canvas width="400" height="400"></canvas>
+<script>
+  let cx = document.querySelector("canvas").getContext("2d");
+
+  let lastTime2 = null;
+  function frame(time) {
+    if (lastTime2 != null) {
+      updateAnimation(Math.min(100, time - lastTime2) / 1000);
+    }
+    lastTime2 = time;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  let x = 100, y = 300;
+  let radius = 10;
+  let speedX = 100, speedY = 60;
+
+  function updateAnimation(step) {
+    cx.clearRect(0, 0, 400, 400);
+    cx.strokeStyle = "blue";
+    cx.lineWidth = 4;
+    cx.strokeRect(25, 25, 350, 350);
+    
+    x += step * speedX;
+    y += step * speedY;
+    if (x < 25 + radius || x > 375 - radius) speedX = -speedX;
+    if (y < 25 + radius || y > 375 - radius) speedY = -speedY;
+    cx.fillStyle = "red";
+    cx.beginPath();
+    cx.arc(x, y, radius, 0, 7);
+    cx.fill();
+  }
+</script>
+
+<!-- Precomputed mirroring -->
+<!-- One way to go about it is to have a sprite sheet with the mirrored image, then it would be a simple matter of -->
+<!-- Loading from the correct space in the sprite character sheet. The other alternative is to, only once, invert  -->
+<!-- the sheet and save it as another image, so that you have the mirrored character. -->
+
+<!-- 
+    I forgot that a canvas can be an element source image.
+    The key to the solution is the fact that we can use a canvas element as a source image when using drawImage.
+    It is possible to create an extra <canvas> element, without adding it to the document, and draw our inverted sprites
+    to it, once. When drawing an actual frame, we just copy the already inverted sprites to the main canvas.
+
+    Some care would be required because images do not load instantly. We do the inverted drawing only once, and if we do it
+    before the image loads, it won’t draw anything. A "load" handler on the image can be used to draw the inverted images to
+    the extra canvas. This canvas can be used as a drawing source immediately (it’ll simply be blank until we draw the
+    character onto it).
+ -->

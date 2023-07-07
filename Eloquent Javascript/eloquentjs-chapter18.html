@@ -1,0 +1,512 @@
+<!-- Browsers and HTTP -->
+
+<form method="GET" action="example/message.html">
+    <p>Name: <input type="text" name="name"></p>
+    <p>Message:<br><textarea name="message"></textarea></p>
+    <p><button type="submit">Send</button></p>
+</form>
+
+<script>
+    console.log(encodeURIComponent("Yes?"));
+    // → Yes%3F
+    console.log(decodeURIComponent("Yes%3F"));
+    // → Yes?
+</script>
+
+<!-- Fetch -->
+
+<script>
+    fetch("example/data.txt").then(response => {
+        console.log(response.status);
+        // → 200
+        console.log(response.headers.get("Content-Type"));
+        // → text/plain
+    });
+
+    fetch("example/data.txt")
+        .then(resp => resp.text())
+        .then(text => console.log(text));
+    // → This is the content of data.txt
+
+    fetch("example/data.txt", { method: "DELETE" }).then(resp => {
+        console.log(resp.status);
+        // → 405
+    });
+
+    fetch("example/data.txt", { headers: { Range: "bytes=8-19" } })
+        .then(resp => resp.text())
+        .then(console.log);
+    // → the content
+</script>
+
+<!-- Form fields -->
+
+<p><input type="text" value="abc"> (text)</p>
+<p><input type="password" value="abc"> (password)</p>
+<p><input type="checkbox" checked> (checkbox)</p>
+<p><input type="radio" value="A" name="choice">
+    <input type="radio" value="B" name="choice" checked>
+    <input type="radio" value="C" name="choice"> (radio)
+</p>
+<p><input type="file"> (file)</p>
+
+<textarea>
+    one
+    two
+    three
+</textarea>
+
+<select>
+    <option>Pancakes</option>
+    <option>Pudding</option>
+    <option>Ice cream</option>
+</select>
+
+<!-- Focus -->
+
+<input type="text">
+<script>
+    document.querySelector("input").focus();
+    console.log(document.activeElement.tagName);
+    // → INPUT
+    document.querySelector("input").blur();
+    console.log(document.activeElement.tagName);
+  // → BODY
+</script>
+
+<input type="text" tabindex=1> <a href=".">(help)</a>
+<button onclick="console.log('ok')" tabindex=2>OK</button>
+
+<!-- Disabled fields -->
+
+<button>I'm all right</button>
+<button disabled>I'm out</button>
+
+<!-- The form as a whole -->
+
+<form action="example/submit.html">
+    Name: <input type="text" name="name"><br>
+    Password: <input type="password" name="password"><br>
+    <button type="submit">Log in</button>
+</form>
+<script>
+    let form = document.querySelector("form");
+    console.log(form.elements[1].type);
+    // → password
+    console.log(form.elements.password.type);
+    // → password
+    console.log(form.elements.name.form == form);
+    // → true
+</script>
+
+<form action="example/submit.html">
+    Value: <input type="text" name="value">
+    <button type="submit">Save</button>
+</form>
+<script>
+    let form = document.querySelector("form");
+    form.addEventListener("submit", event => {
+        console.log("Saving value", form.elements.value.value);
+        event.preventDefault();
+    });
+</script>
+
+<!-- Text fields -->
+
+<textarea></textarea>
+<script>
+    let textarea = document.querySelector("textarea");
+    textarea.addEventListener("keydown", event => {
+        // The key code for F2 happens to be 113
+        if (event.keyCode == 113) {
+            replaceSelection(textarea, "Khasekhemwy");
+            event.preventDefault();
+        }
+    });
+    function replaceSelection(field, word) {
+        let from = field.selectionStart, to = field.selectionEnd;
+        field.value = field.value.slice(0, from) + word +
+            field.value.slice(to);
+        // Put the cursor after the word
+        field.selectionStart = from + word.length;
+        field.selectionEnd = from + word.length;
+    }
+</script>
+
+<input type="text"> length: <span id="length">0</span>
+<script>
+    let text = document.querySelector("input");
+    let output = document.querySelector("#length");
+    text.addEventListener("input", () => {
+        output.textContent = text.value.length;
+    });
+</script>
+
+<!-- Checkboxes and radio buttons -->
+
+<label>
+    <input type="checkbox" id="purple"> Make this page purple
+</label>
+<script>
+    let checkbox = document.querySelector("#purple");
+    checkbox.addEventListener("change", () => {
+        document.body.style.background =
+            checkbox.checked ? "mediumpurple" : "";
+    });
+</script>
+
+Color:
+<label>
+    <input type="radio" name="color" value="orange"> Orange
+</label>
+<label>
+    <input type="radio" name="color" value="lightgreen"> Green
+</label>
+<label>
+    <input type="radio" name="color" value="lightblue"> Blue
+</label>
+<script>
+    let buttons = document.querySelectorAll("[name=color]");
+    for (let button of Array.from(buttons)) {
+        button.addEventListener("change", () => {
+            document.body.style.background = button.value;
+        });
+    }
+</script>
+
+<!-- Select fields -->
+
+<select multiple>
+    <option value="1">0001</option>
+    <option value="2">0010</option>
+    <option value="4">0100</option>
+    <option value="8">1000</option>
+</select> = <span id="output">0</span>
+<script>
+    let select = document.querySelector("select");
+    let output = document.querySelector("#output");
+    select.addEventListener("change", () => {
+        let number = 0;
+        for (let option of Array.from(select.options)) {
+            if (option.selected) {
+                number += Number(option.value);
+            }
+        }
+        output.textContent = number;
+    });
+</script>
+
+<!-- File fields -->
+<input type="file">
+<script>
+    let input = document.querySelector("input");
+    input.addEventListener("change", () => {
+        if (input.files.length > 0) {
+            let file = input.files[0];
+            console.log("You chose", file.name);
+            if (file.type) console.log("It has type", file.type);
+        }
+    });
+</script>
+
+<input type="file" multiple>
+<script>
+    let input = document.querySelector("input");
+    input.addEventListener("change", () => {
+        for (let file of Array.from(input.files)) {
+            let reader = new FileReader();
+            reader.addEventListener("load", () => {
+                console.log("File", file.name, "starts with",
+                    reader.result.slice(0, 20));
+            });
+            reader.readAsText(file);
+        }
+    });
+</script>
+
+<!-- Storing data client-side -->
+
+<script>
+    localStorage.setItem("username", "marijn");
+    console.log(localStorage.getItem("username"));
+    // → marijn
+    localStorage.removeItem("username");
+</script>
+
+Notes: <select></select> <button>Add</button><br>
+<textarea style="width: 100%"></textarea>
+
+<script>
+    let list = document.querySelector("select");
+    let note = document.querySelector("textarea");
+
+    let state;
+    function setState(newState) {
+        list.textContent = "";
+        for (let name of Object.keys(newState.notes)) {
+            let option = document.createElement("option");
+            option.textContent = name;
+            if (newState.selected == name) option.selected = true;
+            list.appendChild(option);
+        }
+        note.value = newState.notes[newState.selected];
+
+        localStorage.setItem("Notes", JSON.stringify(newState));
+        state = newState;
+    }
+    setState(JSON.parse(localStorage.getItem("Notes")) || {
+        notes: { "shopping list": "Carrots\nRaisins" },
+        selected: "shopping list"
+    });
+
+    list.addEventListener("change", () => {
+        setState({ notes: state.notes, selected: list.value });
+    });
+    note.addEventListener("change", () => {
+        setState({
+            notes: Object.assign({}, state.notes,
+                { [state.selected]: note.value }),
+            selected: state.selected
+        });
+    });
+    document.querySelector("button")
+        .addEventListener("click", () => {
+            let name = prompt("Note name");
+            if (name) setState({
+                notes: Object.assign({}, state.notes, { [name]: "" }),
+                selected: name
+            });
+        });
+</script>
+
+<!-- EXERCISES -->
+
+<!-- Content negotiation -->
+<script>
+    // Your code here.
+    fetch('https://eloquentjavascript.net/author', { headers: { Accept: 'text/plain' } })
+        .then(response => response.text())
+        .then(response => console.log(response));
+
+    fetch('https://eloquentjavascript.net/author', { headers: { Accept: 'text/html' } })
+        .then(response => response.text())
+        .then(response => console.log(response));
+
+    fetch('https://eloquentjavascript.net/author', { headers: { Accept: 'application/json' } })
+        .then(response => response.json())
+        .then(response => console.log(response));
+
+    fetch('https://eloquentjavascript.net/author', { headers: { Accept: 'application/rainbows+unicorns' } })
+        .then(response => response.text())
+        .then(response => console.log(response));
+</script>
+
+<!-- BOOK SOLUTION -->
+<script>
+    const url = "https://eloquentjavascript.net/author";
+    const types = ["text/plain",
+        "text/html",
+        "application/json",
+        "application/rainbows+unicorns"];
+
+    async function showTypes() {
+        for (let type of types) {
+            let resp = await fetch(url, { headers: { accept: type } });
+            console.log(`${type}: ${await resp.text()}\n`);
+        }
+    }
+
+    showTypes();
+</script>
+
+<!-- A JavaScript workbench -->
+<textarea id="code">return "hi";</textarea>
+<button id="button">Run</button>
+<pre id="output"></pre>
+
+<script>
+    // Your code here.
+    const button = document.querySelector('#button');
+    const input = document.querySelector('#code');
+    const output = document.querySelector('#output');
+
+    button.addEventListener('click', event => {
+        const result = String(Function(input.value)());
+        output.textContent = result;
+    });
+</script>
+
+<!-- BOOK SOLUTION -->
+<script src="code/chapter/18_http.js"></script>
+
+<textarea id="code">return "hi";</textarea>
+<button id="button">Run</button>
+<pre id="output"></pre>
+
+<script>
+    document.querySelector("#button").addEventListener("click", () => {
+        let code = document.querySelector("#code").value;
+        let outputNode = document.querySelector("#output");
+        try {
+            let result = Function(code)();
+            outputNode.innerText = String(result);
+        } catch (e) {
+            outputNode.innerText = "Error: " + e;
+        }
+    });
+</script>
+
+<!-- Conway’s Game of Life -->
+<div id="grid"></div>
+<button id="next">Next generation</button>
+
+<script>
+    // Your code here.
+    const grid = document.querySelector('#grid');
+    const nextGeneration = document.querySelector('#next');
+    const arr = [];
+    for (let i = 0; i < 10; i++) {
+        arr[i] = [];
+        for (let j = 0; j < 10; j++) {
+            const newElement = document.createElement('input');
+            newElement.type = 'checkbox';
+            if ((Math.random() * 100) >= 50)
+                newElement.checked = true;
+            arr[i][j] = newElement;
+            grid.appendChild(newElement);
+        }
+        grid.appendChild(document.createElement('br'));
+    }
+
+    nextGeneration.addEventListener('click', event => {
+        let invertState = [];
+
+        for (let i = 0; i < arr.length; i++) {
+            for (let j = 0; j < arr.length; j++) {
+                const neighbors = getNeighbors(arr, i, j);
+                const aliveNeighbors = neighbors.filter(x => x.checked).length;
+
+                if (arr[i][j].checked && (aliveNeighbors < 2 || aliveNeighbors > 3))
+                    invertState.push(arr[i][j]);
+                if (!arr[i][j].checked && aliveNeighbors === 3)
+                    invertState.push(arr[i][j]);
+            }
+        }
+
+        invertState.forEach(cell => cell.checked = !cell.checked);
+    });
+
+    function getNeighbors(arr, row, column) {
+        let totalNeighbors = [];
+        if (row - 1 > -1 && column - 1 > -1)
+            totalNeighbors.push(arr[row - 1][column - 1].checked);
+        if (row - 1 > -1)
+            totalNeighbors.push(arr[row - 1][column]);
+        if (row - 1 > -1 && column + 1 < arr[row].length)
+            totalNeighbors.push(arr[row - 1][column + 1]);
+        if (column - 1 > -1)
+            totalNeighbors.push(arr[row][column - 1]);
+        if (column + 1 < arr[row].length)
+            totalNeighbors.push(arr[row][column + 1]);
+        if (row + 1 < arr.length && column - 1 > -1)
+            totalNeighbors.push(arr[row + 1][column - 1]);
+        if (row + 1 < arr.length)
+            totalNeighbors.push(arr[row + 1][column]);
+        if (row + 1 < arr.length && column + 1 < arr.length)
+            totalNeighbors.push(arr[row + 1][column + 1]);
+
+        return totalNeighbors;
+    }
+</script>
+
+<!-- BOOK SOLUTION -->
+<!doctype html>
+<script src="code/chapter/18_http.js"></script>
+
+<div id="grid"></div>
+<button id="next">Next generation</button>
+<button id="run">Auto run</button>
+
+<script>
+    const width = 30, height = 15;
+
+    // I will represent the grid as an array of booleans.
+
+    let gridNode = document.querySelector("#grid");
+    // This holds the checkboxes that display the grid in the document.
+    let checkboxes = [];
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let box = document.createElement("input");
+            box.type = "checkbox";
+            gridNode.appendChild(box);
+            checkboxes.push(box);
+        }
+        gridNode.appendChild(document.createElement("br"));
+    }
+
+    function gridFromCheckboxes() {
+        return checkboxes.map(box => box.checked);
+    }
+    function checkboxesFromGrid(grid) {
+        grid.forEach((value, i) => checkboxes[i].checked = value);
+    }
+    function randomGrid() {
+        let result = [];
+        for (let i = 0; i < width * height; i++) {
+            result.push(Math.random() < 0.3);
+        }
+        return result;
+    }
+
+    checkboxesFromGrid(randomGrid());
+
+    // This does a two-dimensional loop over the square around the given
+    // x,y position, counting all fields that have a cell but are not the
+    // center field.
+    function countNeighbors(grid, x, y) {
+        let count = 0;
+        for (let y1 = Math.max(0, y - 1); y1 <= Math.min(height - 1, y + 1); y1++) {
+            for (let x1 = Math.max(0, x - 1); x1 <= Math.min(width - 1, x + 1); x1++) {
+                if ((x1 != x || y1 != y) && grid[x1 + y1 * width]) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    function nextGeneration(grid) {
+        let newGrid = new Array(width * height);
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                let neighbors = countNeighbors(grid, x, y);
+                let offset = x + y * width;
+                if (neighbors < 2 || neighbors > 3) {
+                    newGrid[offset] = false;
+                } else if (neighbors == 2) {
+                    newGrid[offset] = grid[offset];
+                } else {
+                    newGrid[offset] = true;
+                }
+            }
+        }
+        return newGrid;
+    }
+
+    function turn() {
+        checkboxesFromGrid(nextGeneration(gridFromCheckboxes()));
+    }
+
+    document.querySelector("#next").addEventListener("click", turn);
+
+    let running = null;
+    document.querySelector("#run").addEventListener("click", () => {
+        if (running) {
+            clearInterval(running);
+            running = null;
+        } else {
+            running = setInterval(turn, 400);
+        }
+    });
+</script>

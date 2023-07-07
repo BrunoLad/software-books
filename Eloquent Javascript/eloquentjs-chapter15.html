@@ -1,0 +1,575 @@
+<!-- BOOK example codes -->
+
+<p>Click this document to activate the handler.</p>
+<script>
+    window.addEventListener("click", () => {
+        console.log("You knocked?");
+    });
+</script>
+
+<!-- <button>Click me</button>
+<p>No handler here.</p>
+<script>
+  let button = document.querySelector("button");
+  button.addEventListener("click", () => {
+    console.log("Button clicked.");
+  });
+</script> -->
+
+<button id="actOnceButton">Act-once button</button>
+<script>
+    let actOnceButton = document.querySelector("#actOnceButton");
+    function once() {
+        console.log("Done.");
+        actOnceButton.removeEventListener("click", once);
+    }
+    actOnceButton.addEventListener("click", once);
+</script>
+
+<button>Click me any way you want</button>
+<script>
+    let button = document.querySelector("button");
+    button.addEventListener("mousedown", event => {
+        if (event.button == 0) {
+            console.log("Left button");
+        } else if (event.button == 1) {
+            console.log("Middle button");
+        } else if (event.button == 2) {
+            console.log("Right button");
+        }
+    });
+</script>
+
+<button>A</button>
+<button>B</button>
+<button>C</button>
+<script>
+    document.body.addEventListener("click", event => {
+        if (event.target.nodeName == "BUTTON") {
+            console.log("Clicked", event.target.textContent);
+        }
+    });
+</script>
+
+<a href="https://developer.mozilla.org/">MDN</a>
+<script>
+    let link = document.querySelector("a");
+    link.addEventListener("click", event => {
+        console.log("Nope.");
+        event.preventDefault();
+    });
+</script>
+
+<p>This page turns violet when you hold the V key.</p>
+<script>
+    window.addEventListener("keydown", event => {
+        if (event.key == "v") {
+            document.body.style.background = "violet";
+        }
+    });
+    window.addEventListener("keyup", event => {
+        if (event.key == "v") {
+            document.body.style.background = "";
+        }
+    });
+</script>
+
+<p>Press Control-Space to continue.</p>
+<script>
+    window.addEventListener("keydown", event => {
+        if (event.key == " " && event.ctrlKey) {
+            console.log("Continuing!");
+        }
+    });
+</script>
+
+<style>
+    body {
+        height: 200px;
+        background: beige;
+    }
+
+    .dot {
+        height: 8px;
+        width: 8px;
+        border-radius: 4px;
+        /* rounds corners */
+        background: blue;
+        position: absolute;
+    }
+</style>
+<script>
+    window.addEventListener("click", event => {
+        let dot = document.createElement("div");
+        dot.className = "dot";
+        dot.style.left = (event.pageX - 4) + "px";
+        dot.style.top = (event.pageY - 4) + "px";
+        document.body.appendChild(dot);
+    });
+</script>
+
+<style>
+    body {
+        height: 200px;
+        background: beige;
+    }
+
+    .dot {
+        height: 8px;
+        width: 8px;
+        border-radius: 4px;
+        /* rounds corners */
+        background: blue;
+        position: absolute;
+    }
+</style>
+<script>
+    window.addEventListener("click", event => {
+        let dot = document.createElement("div");
+        dot.className = "dot";
+        dot.style.left = (event.pageX - 4) + "px";
+        dot.style.top = (event.pageY - 4) + "px";
+        document.body.appendChild(dot);
+    });
+</script>
+
+<style>
+    dot {
+        position: absolute;
+        display: block;
+        border: 2px solid red;
+        border-radius: 50px;
+        height: 100px;
+        width: 100px;
+    }
+</style>
+<p>Touch this page</p>
+<script>
+    function update(event) {
+        for (let dot; dot = document.querySelector("dot");) {
+            dot.remove();
+        }
+        for (let i = 0; i < event.touches.length; i++) {
+            let { pageX, pageY } = event.touches[i];
+            let dot = document.createElement("dot");
+            dot.style.left = (pageX - 50) + "px";
+            dot.style.top = (pageY - 50) + "px";
+            document.body.appendChild(dot);
+        }
+    }
+    window.addEventListener("touchstart", update);
+    window.addEventListener("touchmove", update);
+    window.addEventListener("touchend", update);
+</script>
+
+<style>
+    #progress {
+        border-bottom: 2px solid blue;
+        width: 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+
+    .data {
+        overflow: scroll;
+        max-height: 300px;
+    }
+</style>
+<div id="progress"></div>
+<div class="data"></div>
+<script>
+    // Create some content
+    document.body.appendChild(document.createTextNode(
+        "supercalifragilisticexpialidocious ".repeat(1000)));
+
+    let dataDiv = document.querySelector(".data");
+    dataDiv.appendChild(document.createTextNode("banana ".repeat(1000)));
+    let bar = document.querySelector("#progress");
+    dataDiv.addEventListener("scroll", () => {
+        console.log("data div scrolled");
+    });
+    window.addEventListener("scroll", () => {
+        let max = document.body.scrollHeight - innerHeight;
+        bar.style.width = `${(pageYOffset / max) * 100}%`;
+        console.log("window scrolled");
+    });
+</script>
+
+<p><label>Name:<input type="text" data-help="Your full name"></label></p>
+<p><label>Age:<input type="text" data-help="Your age in years"></label></p>
+<p id="help"></p>
+
+<script>
+    let help = document.querySelector("#help");
+    let fields = document.querySelectorAll("input");
+    for (let field of Array.from(fields)) {
+        field.addEventListener("focus", event => {
+            let text = event.target.getAttribute("data-help");
+            help.textContent = text;
+        });
+        field.addEventListener("blur", event => {
+            help.textContent = "";
+        });
+    }
+</script>
+
+<script>
+    addEventListener("message", event => {
+        postMessage(event.data * event.data);
+    });
+
+    let squareWorker = new Worker("code/squareworker.js");
+    squareWorker.addEventListener("message", event => {
+        console.log("The worker responded:", event.data);
+    });
+    squareWorker.postMessage(10);
+    squareWorker.postMessage(24);
+</script>
+
+<script>
+    let bombTimer = setTimeout(() => {
+        console.log("BOOM!");
+    }, 500);
+
+    if (Math.random() < 0.5) { // 50% chance
+        console.log("Defused.");
+        clearTimeout(bombTimer);
+    }
+
+    let ticks = 0;
+    let clock = setInterval(() => {
+        console.log("tick", ticks++);
+        if (ticks == 10) {
+            clearInterval(clock);
+            console.log("stop.");
+        }
+    }, 200);
+</script>
+
+<label>Debounce event:<textarea>Type something here...</textarea></label>
+<script>
+    let textarea = document.querySelector("textarea");
+    let timeout;
+    textarea.addEventListener("input", () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => console.log("Typed!"), 500);
+    });
+</script>
+
+<script>
+    let scheduled = null;
+    window.addEventListener("mousemove", event => {
+        if (!scheduled) {
+            setTimeout(() => {
+                document.body.textContent =
+                    `Mouse at ${scheduled.pageX}, ${scheduled.pageY}`;
+                scheduled = null;
+            }, 250);
+        }
+        scheduled = event;
+    });
+</script>
+
+<!-- EXERCISES -->
+<!-- Balloon -->
+<style>
+    p {
+        font-size: 10px;
+    }
+</style>
+
+<p>🎈</p>
+
+<script>
+    // Your code here
+    const balloonContainer = document.querySelector('p');
+    window.addEventListener('keydown', controlBalloonSize);
+
+    function controlBalloonSize(event) {
+        if (event.key === 'ArrowUp')
+            editByRatio(1.1);
+        if (event.key === 'ArrowDown')
+            editByRatio(0.9);
+        event.preventDefault();
+    }
+
+    function editByRatio(ratio) {
+        const size = parseInt(window.getComputedStyle(balloonContainer, null).fontSize);
+        balloonContainer.style.fontSize = Math.max(Math.round((size * ratio)), 1) + 'px';
+
+        if (size >= 50)
+            explode();
+    }
+
+    function explode() {
+        balloonContainer.textContent = '\u{1F4A5}';
+        window.removeEventListener('keydown', controlBalloonSize);
+    }
+</script>
+
+<!-- Book Solution -->
+<p>🎈</p>
+
+<script>
+    let p = document.querySelector("p");
+    let size;
+    function setSize(newSize) {
+        size = newSize;
+        p.style.fontSize = size + "px";
+    }
+    setSize(20);
+
+    function handleArrow(event) {
+        if (event.key == "ArrowUp") {
+            if (size > 70) {
+                p.textContent = "💥";
+                document.body.removeEventListener("keydown", handleArrow);
+            } else {
+                setSize(size * 1.1);
+                event.preventDefault();
+            }
+        } else if (event.key == "ArrowDown") {
+            setSize(size * 0.9);
+            event.preventDefault();
+        }
+    }
+    document.body.addEventListener("keydown", handleArrow);
+</script>
+
+<!-- Mouse trail -->
+<div class="trail"></div>
+<div class="trail"></div>
+<div class="trail"></div>
+<div class="trail"></div>
+<div class="trail"></div>
+<div class="trail"></div>
+<div class="trail"></div>
+<div class="trail"></div>
+<div class="trail"></div>
+<div class="trail"></div>
+
+
+<style>
+    .trail {
+        /* className for the trail elements */
+        position: absolute;
+        height: 6px;
+        width: 6px;
+        border-radius: 3px;
+        background: teal;
+    }
+
+    body {
+        height: 300px;
+    }
+</style>
+
+<script>
+    // Your code here.
+    // Thoughts:
+    // Create a bunch of divs and randomly distribute them across the page
+    // Then either, after the mouse hovers the trail, it's added as a trail => DONE
+    // or once it is in a certain radius of the mouse.
+
+    const trails = Array.from(document.querySelectorAll('.trail'));
+    let trailCount = 0;
+
+    // Randomly distributes the divs across the page
+    for (let trail of trails) {
+        trail.style.left = Math.ceil(Math.random() * window.innerWidth) + 'px';
+        trail.style.top = Math.ceil(Math.random() * window.innerHeight) + 'px';
+    }
+
+    // 8 offset for left
+    // and 25 offset for top
+    // gives a nice alignment with the mouse
+    function addTrail(event, element, offset) {
+        element.style.left = (event.clientX + (8 * offset)) + 'px';
+        element.style.top = (event.clientY + (25 * offset)) + 'px';
+    }
+
+    function isInsideElement(element, event) {
+        return event.pageX >= element.offsetLeft &&
+            event.pageY >= element.offsetTop &&
+            event.pageX <= element.offsetLeft + element.offsetWidth &&
+            event.pageY <= element.offsetTop + element.offsetHeight;
+    }
+
+    // distance between points
+    function isWithinRadius(element, event, r = 25) {
+        const distance = Math.sqrt(
+            Math.pow(event.pageX - (element.offsetLeft + element.offsetWidth / 2), 2) +
+            Math.pow(event.pageY - (element.offsetTop + element.offsetHeight / 2), 2));
+        return distance <= r;
+    }
+
+    function hovering(element) {
+        return element.hasAttribute('data-trail');
+    }
+
+    function notHovering(element) {
+        return !hovering(element);
+    }
+
+    // Scenario of mouse entering inside of any div element
+    /*
+    function handleTrailInclusion(event) {
+      if (event.target.nodeName === 'DIV') {
+        const index = trails.findIndex(t => isInsideElement(t, event));
+  
+        if (index > -1) {
+          const offset = ++trailCount;
+          const ref = trails[index];
+          window.addEventListener('mousemove', (innerEvent) => {
+            addTrail(innerEvent, ref, offset);
+          });
+        }
+      }
+    }
+    */
+
+    // Scenario of mouse coming within defined radius
+    function handleTrailInclusion(event) {
+        const index = trails.findIndex(t => isWithinRadius(t, event) && notHovering(t));
+
+        if (index > -1) {
+            const ref = trails[index];
+            ref.setAttribute('data-trail', true);
+            const offset = trails.filter(x => x.hasAttribute('data-trail')).length;
+            window.addEventListener('mousemove', (innerEvent) => {
+                addTrail(innerEvent, ref, offset);
+            });
+
+            if (trailCount >= trails.length)
+                window.removeEventListener('mousemove', handleTrailInclusion);
+        }
+    }
+
+    window.addEventListener('mousemove', handleTrailInclusion);
+  // Inside element scenario
+  // window.addEventListener('mouseover', handleTrailInclusion);
+</script>
+
+<!-- BOOK SOLUTION -->
+<!-- Slightly different than what I understood -->
+<style>
+    .trail {
+        /* className for the trail elements */
+        position: absolute;
+        height: 6px;
+        width: 6px;
+        border-radius: 3px;
+        background: teal;
+    }
+
+    body {
+        height: 300px;
+    }
+</style>
+
+<body>
+    <script>
+        let dots = [];
+        for (let i = 0; i < 12; i++) {
+            let node = document.createElement("div");
+            node.className = "trail";
+            document.body.appendChild(node);
+            dots.push(node);
+        }
+        let currentDot = 0;
+
+        window.addEventListener("mousemove", event => {
+            let dot = dots[currentDot];
+            dot.style.left = (event.pageX - 3) + "px";
+            dot.style.top = (event.pageY - 3) + "px";
+            currentDot = (currentDot + 1) % dots.length;
+        });
+    </script>
+</body>
+
+<!-- Tabs -->
+<style>
+    tab-panel {
+        display: block;
+        width: 150px;
+        height: 50px;
+        border: 1px solid black;
+        margin-top: 25px;
+    }
+
+    button {
+        position: relative;
+        bottom: 22px;
+    }
+</style>
+
+<tab-panel>
+    <div data-tabname="one">Tab one</div>
+    <div data-tabname="two">Tab two</div>
+    <div data-tabname="three">Tab three</div>
+</tab-panel>
+<script>
+    function asTabs(node) {
+        // Your code here.
+        const firstDiv = node.firstElementChild;
+        for (let i = 0; i < node.children.length; i += 2) {
+            if (node.children[i].nodeName !== 'BUTTON') {
+                const currNode = node.children[i];
+                const button = document.createElement('button');
+                button.textContent = currNode.getAttribute('data-tabname');
+
+                button.addEventListener('click', function () {
+                    currNode.style.display = 'block';
+                    this.style.backgroundColor = 'blue';
+                    const childList = node.children;
+                    for (let j = 0; j < childList.length; ++j) {
+                        if (childList[j].nodeName !== 'BUTTON' && childList[j] !== currNode) {
+                            childList[j].style.display = 'none';
+                        }
+
+                        if (childList[j].nodeName === 'BUTTON' && childList[j] !== this)
+                            childList[j].style.backgroundColor = 'buttonface';
+                    }
+                });
+                currNode.style.display = 'none';
+
+                node.insertBefore(button, firstDiv);
+            }
+        }
+    }
+    asTabs(document.querySelector("tab-panel"));
+</script>
+
+<!-- BOOK SOLUTION -->
+<tab-panel>
+    <div data-tabname="one">Tab one</div>
+    <div data-tabname="two">Tab two</div>
+    <div data-tabname="three">Tab three</div>
+</tab-panel>
+<script>
+    function asTabs(node) {
+        let tabs = Array.from(node.children).map(node => {
+            let button = document.createElement("button");
+            button.textContent = node.getAttribute("data-tabname");
+            let tab = { node, button };
+            button.addEventListener("click", () => selectTab(tab));
+            return tab;
+        });
+
+        let tabList = document.createElement("div");
+        for (let { button } of tabs) tabList.appendChild(button);
+        node.insertBefore(tabList, node.firstChild);
+
+        function selectTab(selectedTab) {
+            for (let tab of tabs) {
+                let selected = tab == selectedTab;
+                tab.node.style.display = selected ? "" : "none";
+                tab.button.style.color = selected ? "red" : "";
+            }
+        }
+        selectTab(tabs[0]);
+    }
+
+    asTabs(document.querySelector("tab-panel"));
+</script>
