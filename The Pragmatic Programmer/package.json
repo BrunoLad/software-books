@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "ecstatic": "^4.1.4",
+    "ini": "^4.1.0",
+    "mime": "^3.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.6.0",
+    "tape": "^5.6.3",
+    "why-is-node-running": "^2.2.2"
+  }
+}
